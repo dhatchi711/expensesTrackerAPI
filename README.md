@@ -1,7 +1,5 @@
 # README
 
-# README
-
 This README would normally document whatever steps are necessary to get the
 application up and running.
 
@@ -12,3 +10,5 @@ Clone the repo and navigate to its path on Terminal.
 run bundle install to install all of the app dependancies.
 run rails db:migrate to initialize and migrate models to sqlite databse.
 run rails s to start the server.
+
+# README
