@@ -5,12 +5,17 @@ class ExpensesController < ApplicationController
     end
 
     def create
-        user = User.create!(user_params)
-        expense = Expense.new(expense_params.merge(user_id: user.id))
-        if expense.save
-            render json: expense
+        #user = User.create!(user_params)
+        user = User.find(user_params[:userId])
+        if expense_params[:cost] < user.balance
+            remainderBalanceAfterExpense = user.balance - expense_params[:cost]
+            user.update_column(:balance, remainderBalanceAfterExpense)
+            expense = Expense.new(expense_params.merge(user_id: user.id))
+            if expense.save
+                render json: expense
+            end
         else
-            render json: expense.errors
+            render json: user.errors
         end
     end
 
@@ -19,7 +24,7 @@ class ExpensesController < ApplicationController
     end
     private
     def user_params
-        params.require(:user).permit(:name, :balance)
+        params.require(:user).permit(:userId)
     end
     def expense_params
         params.require(:expense).permit(:expenseName, :cost)

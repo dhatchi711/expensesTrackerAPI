@@ -6,8 +6,9 @@ class ExpenseRepresenter
     def as_json
         expenses.map do |expense|
             {
-                expenseOwner: expense.user.name,
                 id: expense.id,
+                expenseOwnerID: expense.user.id,
+                expenseOwnerName: expense.user.name,
                 expenseName: expense.expenseName,
                 expenseCost: expense.cost
             }
