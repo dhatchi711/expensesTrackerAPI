@@ -8,8 +8,7 @@ class ExpensesController < ApplicationController
         #user = User.create!(user_params)
         user = User.find(user_params[:userId])
         if expense_params[:cost] < user.balance
-            remainderBalanceAfterExpense = user.balance - expense_params[:cost]
-            user.update_column(:balance, remainderBalanceAfterExpense)
+            user.update_column(:balance, (user.balance - expense_params[:cost]))
             expense = Expense.new(expense_params.merge(user_id: user.id))
             if expense.save
                 render json: expense

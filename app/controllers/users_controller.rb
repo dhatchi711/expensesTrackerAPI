@@ -4,6 +4,9 @@ class UsersController < ApplicationController
     end
 
     def show
-        render json:User.expense
+        user = User.find(params[:id])
+        expenses = user.expenses
+        render json: (expenses)
     end
+
 end
