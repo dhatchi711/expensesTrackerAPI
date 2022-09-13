@@ -1,12 +1,21 @@
 class UsersController < ApplicationController
+    include ActionController::HttpAuthentication::Token
+    before_action :authenticate_user, only: [:show]
+
     def index
         render json:User.all
     end
 
     def show
-        user = User.find(params[:id])
-        expenses = user.expenses
-        render json: (expenses)
+        userId = params[:id].to_i
+        #user = @currUser
+        if userId != @user_id
+            render json: {error: "Unauthorized to view user's expenses."}, status: :unprocessable_entity
+        else
+            user = User.find(userId)
+            expenses = user.expenses
+            render json: (expenses)
+        end
     end
 
     def create
@@ -21,9 +30,16 @@ class UsersController < ApplicationController
 
     private
 
-    def user_params
-        params.require(:user).permit(:name, :balance, :username)
+    private
+    def authenticate_user
+        token, _options = token_and_options(request)
+        @user_id = AuthenticationTokenService.decode(token)
+        #@currUser = User.find(user_id)
+    rescue ActiveRecord::RecordNotFound
+        render status: :unauthorized
     end
 
-
+    def user_params
+        params.require(:user).permit(:name, :balance, :username, :password)
+    end
 end

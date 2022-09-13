@@ -8,7 +8,7 @@ class ExpensesController < ApplicationController
     end
 
     def create
-        user = User.find(user_params[:userId])
+        user = @currUser
         if expense_params[:cost] < user.balance
             user.update_column(:balance, (user.balance - expense_params[:cost]))
             expense = Expense.new(expense_params.merge(user_id: user.id))
@@ -28,14 +28,11 @@ class ExpensesController < ApplicationController
     def authenticate_user
         token, _options = token_and_options(request)
         user_id = AuthenticationTokenService.decode(token)
-        User.find(user_id)
+        @currUser = User.find(user_id)
     rescue ActiveRecord::RecordNotFound
         render status: :unauthorized
     end
 
-    def user_params
-        params.require(:user).permit(:userId)
-    end
     def expense_params
         params.require(:expense).permit(:expenseName, :cost)
     end
